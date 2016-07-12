@@ -11,3 +11,7 @@ app.set('port', (process.env.PORT || 8080));
 app.listen(app.get('port'), function() {
     console.log("Listening on " + app.get('port') + ".");
 });
+
+app.get("/", function(req, res) {
+	res.render('index');
+});
