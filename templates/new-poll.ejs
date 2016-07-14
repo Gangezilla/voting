@@ -1,0 +1,35 @@
+
+
+<html lang="en">
+<head>
+    <% include partials/head %>
+</head>
+
+	<body class="container">
+
+	    <header>
+	        <% include partials/header %>
+	    </header>
+
+	    <main>
+	    	<div class="jumbotron">
+				<h2> new poll </h2>
+				<a id="add-button" class="btn"> Add new </a>
+				<form id="new" action="/new-poll" method="post">
+					<input type="text" class="form-control" name="question" placeholder="Question:">
+					<br>
+					<input id="answer1" type="text" class="form-control" name="answer1" placeholder="Answer #1">
+					<br>
+					<input id="submitButton" type="submit" value="Submit dat" class="btn-primary">
+				</form>
+
+		</main>
+
+		<footer>
+	        <% include partials/footer %>
+	    </footer>
+
+	</body>
+</html>
+
+<!-- STRETCH GOAL: auto generate another answer field of Answer X and then a new one after that. selector to look at all input fields EXCEPT if they're empty -->
