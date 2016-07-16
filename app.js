@@ -1,17 +1,18 @@
-var express=require('express');
-var mongodb=require('mongodb');
-var passport=require('passport');
-var path=require('path');
+var express = require('express');
+var mongodb = require('mongodb');
+var passport = require('passport');
+var path = require('path');
 var bodyParser = require('body-parser');
-//var database=require('./modules/database');
-var fblogin=require('./modules/fblogin.js');
+var database=require('./modules/database');
+var fblogin = require('./modules/fblogin.js');
 
-var app=express();
+var app = express();
 var MongoClient = mongodb.MongoClient;
 
-var db;
-var url=process.env.MONGOLAB_URI_POLL;
+var datab;
+var url = process.env.MONGOLAB_URI_POLL;
 
+//CONFIG FOR APP
 //EXPRESS CONFIG
 app.set('port', (process.env.PORT || 8080));
 app.listen(app.get('port'), function() {
@@ -30,51 +31,51 @@ app.use(bodyParser.urlencoded({
 
 //MONGO CONFIG
 MongoClient.connect(url, function(err, db) {
-    db = db;
+    datab = db;
     if (err) {
         console.log(err);
     } else {
         console.log('Connected to the Mongo server.');
     }
 });
+//END OF CONFIG
 
+//ROUTES
 //ROUTES FOR INDEX
 app.get("/", function(req, res) {
-	res.render('index');
+    res.render('index');
 });
 
-//LOGIC FOR NEW-POLL
-app.get("/new-poll", function (req, res) {
-	res.render('new-poll');
+//ROUTES FOR NEW-POLL
+app.get("/new-poll", function(req, res) {
+    res.render('new-poll');
 });
 
 app.post("/new-poll", function(req, res) {
-	var answers = [];
-	console.dir(req.body);
-	for (var key in req.body) {
-		if(/name/.test(req.body)) {
-			answers.push(key);
-			console.log(key);
-		}
-	}
-	var doc = {
-	answers: '',
-	author:  '',
-	question: req.body.question
-};
-	//compile, insert.
+	//nned to come back here later on when you've got user auth working and insert the author into here.
+    var answers = [];
+    var doc = {
+        answers: '',
+        author: '',
+        question: req.body.question
+    };
+    for (var key in req.body) {
+        if (/answer/.test(key)) {
+            answers.push(req.body[key]);
+        }
+    }
+    doc.answers = answers;
+    database.insert(datab, 'polls', doc, function(res,req) {
+
+    });
+    res.render('vote');
 });
 
 //LOGIC FOR FB AUTH
 
 app.get("/auth/facebook", function(req, res) {
-	res.send("<h1> okay </h1>");
+    res.send("<h1> okay </h1>");
 });
-
-
-
-//rough: need to create a form that lets someone create 
-
 
 //need to put together a user authentication, probs just fb...
 
