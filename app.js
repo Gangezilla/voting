@@ -11,9 +11,10 @@ var MongoClient = mongodb.MongoClient;
 
 var datab;
 var url = process.env.MONGOLAB_URI_POLL;
-
-//CONFIG FOR APP
-//EXPRESS CONFIG
+//////////////////
+//CONFIG FOR APP//
+//EXPRESS CONFIG//
+//////////////////
 app.set('port', (process.env.PORT || 8080));
 app.listen(app.get('port'), function() {
     console.log("Listening on " + app.get('port') + ".");
@@ -28,8 +29,9 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: true
 }));
-
-//MONGO CONFIG
+////////////////
+//MONGO CONFIG//
+////////////////
 MongoClient.connect(url, function(err, db) {
     datab = db;
     if (err) {
@@ -38,15 +40,16 @@ MongoClient.connect(url, function(err, db) {
         console.log('Connected to the Mongo server.');
     }
 });
-//END OF CONFIG
-
-//ROUTES
-//ROUTES FOR INDEX
+////////////////////
+///////ROUTES///////
+//ROUTES FOR INDEX//
+////////////////////
 app.get("/", function(req, res) {
     res.render('index');
 });
-
-//ROUTES FOR NEW-POLL
+///////////////////////
+//ROUTES FOR NEW-POLL//
+///////////////////////
 app.get("/new-poll", function(req, res) {
     res.render('new-poll');
 });
@@ -54,7 +57,7 @@ app.get("/new-poll", function(req, res) {
 app.post("/new-poll", function(req, res) {
 	//nned to come back here later on when you've got user auth working and insert the author into here.
     var answers = [];
-    var doc = {
+    var file = {
         answers: '',
         author: '',
         question: req.body.question
@@ -64,15 +67,25 @@ app.post("/new-poll", function(req, res) {
             answers.push(req.body[key]);
         }
     }
-    doc.answers = answers;
-    database.insert(datab, 'polls', doc, function(res,req) {
-
+    file.answers = answers;
+    database.insert(datab, 'polls', file, function(err, doc) {
+    	//still need to figure out how to add URL parameter in here.
+    	res.render("vote", {
+    		question: doc.ops[0].question,
+    		 answers: doc.ops[0].answers
+    		});
     });
-    res.render('vote');
 });
+///////////////////
+//ROUTES FOR VOTE//
+///////////////////
+app.get("/vote/:id", function(req, res) {
+//get id out of database, and then fill the page with the relevant stuff.
 
-//LOGIC FOR FB AUTH
-
+});
+//////////////////////
+//ROUTES FOR FB AUTH//
+//////////////////////
 app.get("/auth/facebook", function(req, res) {
     res.send("<h1> okay </h1>");
 });
