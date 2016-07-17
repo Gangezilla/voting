@@ -3,6 +3,8 @@ var mongodb = require('mongodb');
 var passport = require('passport');
 var path = require('path');
 var bodyParser = require('body-parser');
+var ObjectId=require('mongodb').ObjectId;
+
 var database=require('./modules/database');
 var fblogin = require('./modules/fblogin.js');
 
@@ -80,6 +82,21 @@ app.post("/new-poll", function(req, res) {
 //ROUTES FOR VOTE//
 ///////////////////
 app.get("/vote/:id", function(req, res) {
+	var id=req.params.id;
+	database.getID(datab, 'polls', id, function(err, doc) {
+		//console.log(doc);
+		if(err) {
+			console.log(err);
+			return doc(err);
+		} else {
+			console.log('outputting... ');
+			console.log(doc[0].question);
+			res.render("vote", {
+    		question: doc[0].question,
+    		answers: doc[0].answers
+    		});
+		}
+	});
 //get id out of database, and then fill the page with the relevant stuff.
 
 });

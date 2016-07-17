@@ -1,3 +1,6 @@
+var mongodb = require('mongodb');
+var ObjectId=require('mongodb').ObjectId;
+
 module.exports = {
 	//create new question
 	insert: function(db, collection_name, data, cb) {
@@ -11,6 +14,13 @@ module.exports = {
 			return(doc);
 		}
 		});
+	},
+
+	getID: function(db, collection_name, data, cb) {
+		console.log('received '+data);
+		//db.test.find({"_id" : ObjectId("4ecc05e55dd98a436ddcc47c")})
+		var collection=db.collection(collection_name);
+		collection.find({_id: new ObjectId(data)}).toArray(cb);
 	}
 };
 
