@@ -11,7 +11,11 @@
 
 	    <main>
 	    	<div class="jumbotron">
-				
+				<div id="all-polls">
+				<% for(var i=0; i < polls.length; i++) { %>
+				     <div class="poll-list"><%= (polls[i].question) %></div>
+				<% } %>
+				 </div>
 			</div>
 		</main>
 

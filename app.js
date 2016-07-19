@@ -47,7 +47,14 @@ MongoClient.connect(url, function(err, db) {
 //ROUTES FOR INDEX//
 ////////////////////
 app.get("/", function(req, res) {
-    res.render('index');
+var userDocs={};
+	database.getAllResults(datab, 'polls', function(err, doc) {
+		console.log(doc);
+		res.render("index", {
+			polls:(doc)
+		});
+	});
+
 });
 ///////////////////////
 //ROUTES FOR NEW-POLL//
@@ -58,23 +65,25 @@ app.get("/new-poll", function(req, res) {
 
 app.post("/new-poll", function(req, res) {
 	//nned to come back here later on when you've got user auth working and insert the author into here.
-    var answers = [];
+    var answers = {};
     var file = {
-        answers: '',
+        answers: {},
         author: '',
         question: req.body.question
     };
     for (var key in req.body) {
         if (/answer/.test(key)) {
-            answers.push(req.body[key]);
+            answers[req.body[key]]=0;
         }
     }
     file.answers = answers;
+    console.log(file);
     database.insert(datab, 'polls', file, function(err, doc) {
     	//still need to figure out how to add URL parameter in here.
     	res.render("vote", {
     		question: doc.ops[0].question,
-    		 answers: doc.ops[0].answers
+    		answers: doc.ops[0].answers,
+    		id: doc.ops[0]._id
     		});
     });
 });
@@ -90,8 +99,9 @@ app.get("/vote/:id", function(req, res) {
 			return doc(err);
 		} else {
 			console.log('outputting... ');
-			console.log(doc[0].question);
+			console.log(doc[0]._id);
 			res.render("vote", {
+			id: doc[0]._id,
     		question: doc[0].question,
     		answers: doc[0].answers
     		});
@@ -106,26 +116,3 @@ app.get("/vote/:id", function(req, res) {
 app.get("/auth/facebook", function(req, res) {
     res.send("<h1> okay </h1>");
 });
-
-//need to put together a user authentication, probs just fb...
-
-//index could have a little toggle if you're logged in to show your own questions, or everyones.
-
-//authentication.
-//write to database, access database. db entry would be like {["_id", question", "answers", "author"]}
-
-// User Story: As an authenticated user, I can keep my polls and come back later to access them.
-
-// User Story: As an authenticated user, I can share my polls with my friends.
-
-// User Story: As an authenticated user, I can see the aggregate results of my polls.
-
-// User Story: As an authenticated user, I can delete polls that I decide I don't want anymore.
-
-// User Story: As an authenticated user, I can create a poll with any number of possible items.
-
-// User Story: As an unauthenticated or authenticated user, I can see and vote on everyone's polls.
-
-// User Story: As an unauthenticated or authenticated user, I can see the results of polls in chart form. (This could be implemented using Chart.js or Google Charts.)
-
-// User Story: As an authenticated user, if I don't like the options on a poll, I can create a new option.
