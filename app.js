@@ -49,7 +49,6 @@ MongoClient.connect(url, function(err, db) {
 app.get("/", function(req, res) {
 var userDocs={};
 	database.getAllResults(datab, 'polls', function(err, doc) {
-		console.log(doc);
 		res.render("index", {
 			polls:(doc)
 		});
