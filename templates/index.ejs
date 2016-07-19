@@ -13,6 +13,7 @@
 	    	<div class="jumbotron">
 				<div id="all-polls">
 				<% for(var i=0; i < polls.length; i++) { %>
+					<a href="/vote/<%= (polls[i]._id) %>">
 				     <div class="poll-list"><%= (polls[i].question) %></div>
 				<% } %>
 				 </div>
