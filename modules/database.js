@@ -29,6 +29,10 @@ module.exports = {
 		});
 	},
 
+	removeDoc: function(db, collection_name, data, cb) {
+		
+	},
+
 	getUserResults: function(db, collection_name, user, cb) {
 
 	},

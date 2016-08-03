@@ -1,17 +1,18 @@
 var express = require('express');
 var mongodb = require('mongodb');
 var passport = require('passport');
+var FacebookStrategy = require('passport-facebook').Strategy;
 var path = require('path');
 var bodyParser = require('body-parser');
 var ObjectId=require('mongodb').ObjectId;
 
 var database=require('./modules/database');
-var fblogin = require('./modules/fblogin.js');
+
 
 var app = express();
 var MongoClient = mongodb.MongoClient;
-
 var datab;
+var auth = require('./modules/auth')(app, passport, FacebookStrategy, datab);
 var url = process.env.MONGOLAB_URI_POLL;
 //////////////////
 //CONFIG FOR APP//
@@ -22,7 +23,6 @@ app.listen(app.get('port'), function() {
     console.log("Listening on " + app.get('port') + ".");
 });
 
-
 app.set('view engine', 'ejs');
 app.set('views', __dirname + '/templates');
 
@@ -31,6 +31,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: true
 }));
+app.use(passport.initialize());
+app.use(passport.session());
 ////////////////
 //MONGO CONFIG//
 ////////////////
@@ -112,6 +114,9 @@ app.get("/vote/:id", function(req, res) {
 //////////////////////
 //ROUTES FOR FB AUTH//
 //////////////////////
-app.get("/auth/facebook", function(req, res) {
-    res.send("<h1> okay </h1>");
-});
+app.get('/login', passport.authenticate('facebook'));
+
+// app.get('/auth/facebook/callback', auth.use('facebook', {
+//   successRedirect: '/success',
+//   failureRedirect: '/error'
+// }));
