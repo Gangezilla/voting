@@ -12,8 +12,8 @@ var database=require('./modules/database');
 var app = express();
 var MongoClient = mongodb.MongoClient;
 var datab;
-var auth = require('./modules/auth')(app, passport, FacebookStrategy, datab);
 var url = process.env.MONGOLAB_URI_POLL;
+
 //////////////////
 //CONFIG FOR APP//
 //EXPRESS CONFIG//
@@ -42,6 +42,7 @@ MongoClient.connect(url, function(err, db) {
         console.log(err);
     } else {
         console.log('Connected to the Mongo server.');
+        auth = require('./modules/auth')(app, passport, FacebookStrategy, datab);
     }
 });
 ////////////////////
@@ -108,15 +109,27 @@ app.get("/vote/:id", function(req, res) {
     		});
 		}
 	});
+});
 //get id out of database, and then fill the page with the relevant stuff.
 
-});
+// passport.authenticate('facebook', { successRedirect: '/',
+//                                       failureRedirect: '/login' }));
+
+// });
 //////////////////////
 //ROUTES FOR FB AUTH//
 //////////////////////
-app.get('/login', passport.authenticate('facebook'));
+app.get('/login', passport.authenticate('facebook', { scope: 'email'}));
 
-// app.get('/auth/facebook/callback', auth.use('facebook', {
-//   successRedirect: '/success',
-//   failureRedirect: '/error'
-// }));
+app.get('/auth/facebook/callback', 
+	passport.authenticate('facebook', {
+	  successRedirect: '/',
+	  failureRedirect: '/error'
+}), function() {
+	console.log('testing');
+});
+
+
+
+
+
